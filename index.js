@@ -15,7 +15,8 @@ function toJson(fields, line) {
       switch (field.type) {
         case 'bool':
         case 'boolean':
-          if (String(value).trim() === '' && field.default) {
+          value = value.trim();
+          if (value === '' && field.default) {
             value = field.default;
           } else {
             value = !value || value === '0' || value === 'false' || value === 'null' ? false : true;
