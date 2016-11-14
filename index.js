@@ -49,7 +49,6 @@ function toJson(fields, line) {
           break;
 
         default:
-          value = String(value);
           if (field.trim !== false) {
             value = value.trim();
           }
