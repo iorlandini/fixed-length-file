@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/iorlandini/fixed-length-file/issues"
   },
-  "homepage": "https://github.com/iorlandini/fixed-length-file#readme"
+  "homepage": "https://github.com/iorlandini/fixed-length-file#readme",
+  "dependencies": {
+    "lodash": "^4.17.0",
+    "moment": "^2.16.0"
+  }
 }
