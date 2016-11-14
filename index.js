@@ -9,6 +9,7 @@ function toJson(fields, line) {
   var json = {};
 
   _.forEach(fields, function(field) {
+    var isUndefined = false;
     var value = line.substr(0, field.width);
 
     if (!field.formatFn) {
@@ -16,8 +17,11 @@ function toJson(fields, line) {
         case 'bool':
         case 'boolean':
           value = value.trim();
-          if (value === '' && field.default) {
-            value = field.default;
+          if (value === '') {
+            isUndefined = true;
+            if (field.default) {
+              value = field.default;
+            }
           } else {
             value = !value || value === '0' || value === 'false' || value === 'null' ? false : true;
           }
@@ -25,8 +29,11 @@ function toJson(fields, line) {
 
         case 'date':
           value = new Date(moment(value, field.format).format());
-          if (isNaN(value.getTime()) && !_.isUndefined(field.default)) {
-            value = field.default;
+          if (isNaN(value.getTime())) {
+            isUndefined = true;
+            if (!_.isUndefined(field.default)) {
+              value = field.default;
+            }
           }
           break;
 
@@ -34,8 +41,11 @@ function toJson(fields, line) {
         case 'double':
         case 'float':
           value = parseFloat(value);
-          if (isNaN(value) && !_.isUndefined(field.default)) {
-            value = field.default;
+          if (isNaN(value)) {
+            isUndefined = true;
+            if (!_.isUndefined(field.default)) {
+              value = field.default;
+            }
           }
           break;
 
@@ -43,8 +53,11 @@ function toJson(fields, line) {
         case 'integer':
         case 'long':
           value = parseInt(value);
-          if (isNaN(value) && !_.isUndefined(field.default)) {
-            value = field.default;
+          if (isNaN(value)) {
+            isUndefined = true;
+            if (!_.isUndefined(field.default)) {
+              value = field.default;
+            }
           }
           break;
 
@@ -52,20 +65,31 @@ function toJson(fields, line) {
           if (field.trim !== false) {
             value = value.trim();
           }
-          if (!value && !_.isUndefined(field.default)) {
-            value = field.default;
+          if (!value) {
+            isUndefined = true;
+            if (!_.isUndefined(field.default)) {
+              value = field.default;
+            }
           }
       }
     } else if (typeof field.formatFn === 'function') {
       value = field.formatFn(value, field);
+      if (typeof value === 'undefined') {
+        isUndefined = true;
+      }
     } else {
       var fn = global[field.formatFn];
       if (typeof fn === 'function') {
         value = fn(value, field);
+        if (typeof value === 'undefined') {
+          isUndefined = true;
+        }
       }
     }
 
-    _.set(json, field.level ? field.level + '.' + field.name : field.name, value);
+    if (!isUndefined || !field.notSetOnUndefined) {
+      _.set(json, field.level ? field.level + '.' + field.name : field.name, value);
+    }
     line = line.substr(field.width);
   });
 
