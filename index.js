@@ -20,6 +20,8 @@ function toJson(fields, line) {
           }
           break;
 
+        case 'decimal':
+        case 'double':
         case 'float':
           value = parseFloat(value);
           if (isNaN(value) && !_.isUndefined(field.default)) {
@@ -28,6 +30,8 @@ function toJson(fields, line) {
           break;
 
         case 'int':
+        case 'integer':
+        case 'long':
           value = parseInt(value);
           if (isNaN(value) && !_.isUndefined(field.default)) {
             value = field.default;
