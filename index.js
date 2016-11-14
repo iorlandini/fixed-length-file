@@ -13,6 +13,15 @@ function toJson(fields, line) {
 
     if (!field.formatFn) {
       switch (field.type) {
+        case 'bool':
+        case 'boolean':
+          if (String(value).trim() === '' && field.default) {
+            value = field.default;
+          } else {
+            value = !value || value === '0' || value === 'false' || value === 'null' ? false : true;
+          }
+          break;
+
         case 'date':
           value = new Date(moment(value, field.format).format());
           if (isNaN(value.getTime()) && !_.isUndefined(field.default)) {
