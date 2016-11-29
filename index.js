@@ -19,7 +19,7 @@ function toJson(fields, line) {
           value = value.trim();
           if (value === '') {
             isUndefined = true;
-            if (field.default) {
+            if (!_.isUndefined(field.default)) {
               value = field.default;
             }
           } else {
