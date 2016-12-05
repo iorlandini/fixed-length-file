@@ -34,12 +34,15 @@ function fromJson(fields, json) {
         case 'datetime':
         case 'dateTime':
         case 'time':
-          value = new Date(moment(value, field.format).format());
+          value = new Date(value);
           if (isNaN(value.getTime())) {
             isUndefined = true;
             if (!_.isUndefined(field.default)) {
               value = field.default;
             }
+          } else {
+            value = moment(value);
+            value = !value.isValid() ? 0 : value.format(field.format);
           }
           break;
 
